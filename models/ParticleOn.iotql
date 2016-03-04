@@ -1,0 +1,7 @@
+CREATE MODEL ParticleOn WITH
+    schema:name = "particle-on"
+ATTRIBUTE on WITH
+    schema:name = "on",
+    iot:purpose = iot-purpose:on,
+    iot:type = iot:type.boolean
+;
