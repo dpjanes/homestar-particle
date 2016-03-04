@@ -24,7 +24,7 @@
 
 exports.Bridge = require('./ParticleBridge').Bridge;
 exports.bindings = [
-    require('./models/Particle').binding,
+    require('./models/ParticleOn').binding,
 ];
 
 exports.iotdb = require("iotdb");

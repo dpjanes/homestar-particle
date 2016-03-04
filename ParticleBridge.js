@@ -25,7 +25,7 @@
 var iotdb = require('iotdb');
 var _ = iotdb._;
 
-var particle = require('particle-io');
+var Particle = require('particle-io');
 
 var logger = iotdb.logger({
     name: 'homestar-particle',
@@ -43,13 +43,32 @@ var ParticleBridge = function (initd, native) {
 
     self.initd = _.defaults(initd,
         iotdb.keystore().get("bridges/ParticleBridge/initd"), {
-            poll: 30
+            name: null,
+            token: null,
         }
     );
-    self.native = native;   // the thing that does the work - keep this name
 
+    if (_.is.Empty(self.initd.token)) {
+        logger.error({
+            method: "ParticleBridge",
+            cause: "caller must initialize with an 'token' - try homestar set /bridges/ParticleBridge/initd/token <yourkey>",
+        }, "missing initd.token");
+
+        throw new Error("ParticleBridge: expected 'initd.token'");
+    }
+    if (_.is.Empty(self.initd.name)) {
+        logger.error({
+            method: "ParticleBridge",
+            cause: "caller must initialize with an 'name' - try homestar set /bridges/ParticleBridge/initd/name <yourkey>",
+        }, "missing initd.name");
+
+        throw new Error("ParticleBridge: expected 'initd.name'");
+    }
+
+    self.native = native;   // the thing that does the work - keep this name
     if (self.native) {
         self.queue = _.queue("ParticleBridge");
+        self.pinds = [];
     }
 };
 
@@ -71,17 +90,21 @@ ParticleBridge.prototype.discover = function () {
         method: "discover"
     }, "called");
 
-    /*
-     *  This is the core bit of discovery. As you find new
-     *  thimgs, make a new ParticleBridge and call 'discovered'.
-     *  The first argument should be self.initd, the second
-     *  the thing that you do work with
-     */
-    var s = self._particle();
-    s.on('something', function (native) {
-        self.discovered(new ParticleBridge(self.initd, native));
+    self._board(function(error, board) {
+        if (error) {
+            logger.error({
+                method: "discover",
+                name: self.initd.name,
+                error: _.error.message(error),
+            }, "error connecting to the board");
+
+            return;
+        }
+
+        self.discovered(new ParticleBridge(_.d.clone.shallow(self.initd), board));
     });
 };
+
 
 /**
  *  See {iotdb.bridge.Bridge#connect} for documentation.
@@ -94,24 +117,60 @@ ParticleBridge.prototype.connect = function (connectd) {
 
     self._validate_connect(connectd);
 
-    self._setup_polling();
+    self.connectd = _.d.compose.shallow(connectd, {
+        init: {
+        },
+    });
+
+    _.mapObject(self.connectd.init, function(pind, code) {
+        _.mapObject(pind, function(pin, mode) {
+            var read = null;
+            var write = null;
+
+            if (mode === "din") {
+                mode = self.native.MODES.INPUT;
+            } else if (mode === "dout") {
+                mode = self.native.MODES.OUTPUT;
+                write = function(value) {
+                    self.native.digitalWrite(pin, value ? true : false);
+                };
+            } else if (mode === "ain") {
+                mode = self.native.MODES.ANALOG;
+            } else if (mode === "aout") {
+                mode = self.native.MODES.PWM;
+                write = function(value) {
+                    self.native.analogWrite(pin, value);
+                };
+            } else if (mode === "servo") {
+                mode = self.native.MODES.SERVO;
+            } else {
+                logger.error({
+                    method: "connect",
+                    pind: d,
+                    cause: "likely a user error when initially connecting to the Model",
+                }, "unknown pin 'mode' -- ignoring, but this is very bad");
+                return;
+            }
+
+            self.pinds.push({
+                code: code,
+                pin: ("" + pin).toUpperCase(),
+                mode: mode,
+                read: read,
+                write: write,
+            });
+        });
+    });
+
+    logger.info({
+        pinds: self.pinds,
+    }, "pin definitions");
+
+    self.pinds.map(function(pind) {
+        self.native.pinMode(pind.pin, pind.mode);
+    });
+
     self.pull();
-};
-
-ParticleBridge.prototype._setup_polling = function () {
-    var self = this;
-    if (!self.initd.poll) {
-        return;
-    }
-
-    var timer = setInterval(function () {
-        if (!self.native) {
-            clearInterval(timer);
-            return;
-        }
-
-        self.pull();
-    }, self.initd.poll * 1000);
 };
 
 ParticleBridge.prototype._forget = function () {
@@ -159,27 +218,17 @@ ParticleBridge.prototype.push = function (pushd, done) {
         pushd: pushd
     }, "push");
 
-    var qitem = {
-        // if you set "id", new pushes will unqueue old pushes with the same id
-        // id: self.number, 
-        run: function () {
-            self._pushd(pushd);
-            self.queue.finished(qitem);
-        },
-        coda: function() {
-            done();
-        },
-    };
-    self.queue.add(qitem);
-};
+    _.mapObject(pushd, function(value, code) {
+        for (var pi in self.pinds) {
+            var pind = self.pinds[pi];
+            if ((pind.code === code) && pind.write) {
+                pind.write(value);
+                break;
+            }
+        }
+    });
 
-/**
- *  Do the work of pushing. If you don't need queueing
- *  consider just moving this up into push
- */
-ParticleBridge.prototype._push = function (pushd) {
-    if (pushd.on !== undefined) {
-    }
+    return done(null, null);
 };
 
 /**
@@ -202,9 +251,9 @@ ParticleBridge.prototype.meta = function () {
     if (!self.native) {
         return;
     }
-
+    
     return {
-        "iot:thing-id": _.id.thing_urn.unique("Particle", self.native.uuid, self.initd.number),
+        "iot:thing-id": _.id.thing_urn.unique_hash("Particle", self.native.name),
         "schema:name": self.native.name || "Particle",
 
         // "iot:thing-number": self.initd.number,
@@ -227,19 +276,77 @@ ParticleBridge.prototype.reachable = function () {
 ParticleBridge.prototype.configure = function (app) {};
 
 /* -- internals -- */
-var __singleton;
+var __boardd = {};
+var __pendingsd = {};
 
 /**
- *  If you need a singleton to access the library
+ *  This returns a connection object per ( host, port, tunnel_host, tunnel_port )
+ *  tuple, ensuring the correct connection object exists and is connected.
+ *  It calls back with the connection object
+ *
+ *  The code is complicated because we have to keep callbacks stored 
+ *  in '__pendingsd' until the connection is actually made
  */
-ParticleBridge.prototype._particle = function () {
+ParticleBridge.prototype._board = function (callback) {
     var self = this;
 
-    if (!__singleton) {
-        __singleton = particle.init();
+    var board_key = self.initd.name;
+
+    // board existings
+    var board = __boardd[board_key];
+    if (board) {
+        return callback(null, board);
     }
 
-    return __singleton;
+    // queue exists
+    var pendings = __pendingsd[board_key];
+    if (pendings) {
+        pendings.push(callback);
+        return;
+    }
+
+    // brand new queue
+    pendings = [];
+    __pendingsd[board_key] = pendings;
+
+    pendings.push(callback);
+
+    var _connect = function (error) {
+        delete __pendingsd[board_key];
+
+        if (error) {
+            logger.error({
+                method: "_board",
+                npending: pendings.length,
+                name: self.initd.name,
+                error: _.error.message(error),
+            }, "creating web server");
+
+            pendings.map(function (pending) {
+                pending(error, null);
+            });
+            return;
+        }
+
+        __boardd[board_key] = board;
+
+        pendings.map(function (pending) {
+            pending(null, board);
+        });
+    };
+
+    logger.info({
+        method: "_board",
+        npending: pendings.length,
+        name: self.initd.name,
+    }, "connect to Particle");
+
+    var board = new Particle({
+        token: self.initd.token,
+        deviceId: self.initd.name,
+    });
+    board.on("ready", _connect);
+    board.on("error", _connect);
 };
 
 /*
