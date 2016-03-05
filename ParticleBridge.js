@@ -137,6 +137,8 @@ ParticleBridge.prototype.connect = function (connectd) {
                 pind.mode = self.native.MODES.INPUT;
                 pind.read = function() {
                     self.native.digitalRead(pind.pin, function(value) {
+                        value = value ? true : false;
+
                         if (self.pulld[pind.code] === value) {
                             return;
                         }
