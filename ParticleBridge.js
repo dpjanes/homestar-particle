@@ -69,6 +69,7 @@ var ParticleBridge = function (initd, native) {
     if (self.native) {
         self.queue = _.queue("ParticleBridge");
         self.pinds = [];
+        self.pulld = {};
     }
 };
 
@@ -122,43 +123,91 @@ ParticleBridge.prototype.connect = function (connectd) {
         },
     });
 
-    _.mapObject(self.connectd.init, function(pind, code) {
-        _.mapObject(pind, function(pin, mode) {
-            var read = null;
-            var write = null;
+    _.mapObject(self.connectd.init, function(init_pind, code) {
+        _.mapObject(init_pind, function(pin, mode) {
+            var pind = {
+                code: code,
+                pin: ("" + pin).toUpperCase(),
+                mode: null,
+                read: null,
+                write: null,
+            };
 
             if (mode === "din") {
-                mode = self.native.MODES.INPUT;
+                pind.mode = self.native.MODES.INPUT;
+                pind.read = function() {
+                    self.native.digitalRead(pind.pin, function(value) {
+                        if (self.pulld[pind.code] === value) {
+                            return;
+                        }
+
+                        self.pulld[pind.code] = value;
+                        self.pulled(self.pulld);
+                    });
+                }
             } else if (mode === "dout") {
-                mode = self.native.MODES.OUTPUT;
-                write = function(value) {
-                    self.native.digitalWrite(pin, value ? true : false);
+                pind.mode = self.native.MODES.OUTPUT;
+                pind.write = function(value) {
+                    value = value ? true : false;
+                    self.native.digitalWrite(pind.pin, value);
+
+                    if (init_pind.din || init_pind.ain) {
+                        return;
+                    }
+                    if (self.pulld[pind.code] === value) {
+                        return;
+                    }
+                    
+                    self.pulld[pind.code] = value;
+                    self.pulled(self.pulld);
                 };
             } else if (mode === "ain") {
-                mode = self.native.MODES.ANALOG;
+                pind.mode = self.native.MODES.ANALOG;
+                pind.read = function() {
+                    self.native.analogRead(pind.pin, function(value) {
+                        if (self.pulld[pind.code] === value) {
+                            return;
+                        }
+
+                        self.pulld[pind.code] = value;
+                        self.pulled(self.pulld);
+                    });
+                }
             } else if (mode === "aout") {
-                mode = self.native.MODES.PWM;
-                write = function(value) {
-                    self.native.analogWrite(pin, value);
+                pind.mode = self.native.MODES.PWM;
+                pind.write = function(value) {
+                    self.native.analogWrite(pind.pin, value);
+
+                    if (init_pind.din || init_pind.ain) {
+                        return;
+                    }
+                    if (self.pulld[pind.code] === value) {
+                        return;
+                    }
+                    
+                    self.pulld[pind.code] = value;
+                    self.pulled(self.pulld);
                 };
             } else if (mode === "servo") {
-                mode = self.native.MODES.SERVO;
+                pind.mode = self.native.MODES.SERVO;
+                pind.write = function(value) {
+                    self.native.servoWrite(pind.pin, value);
+
+                    if (!pind.read) {
+                        self.pulld[pind.code] = value;
+                        self.pulled(self.pulld);
+                    }
+                };
             } else {
                 logger.error({
                     method: "connect",
-                    pind: d,
+                    init_pind: init_pind,
                     cause: "likely a user error when initially connecting to the Model",
                 }, "unknown pin 'mode' -- ignoring, but this is very bad");
                 return;
             }
 
-            self.pinds.push({
-                code: code,
-                pin: ("" + pin).toUpperCase(),
-                mode: mode,
-                read: read,
-                write: write,
-            });
+            self.pinds.push(pind);
         });
     });
 
@@ -168,9 +217,11 @@ ParticleBridge.prototype.connect = function (connectd) {
 
     self.pinds.map(function(pind) {
         self.native.pinMode(pind.pin, pind.mode);
-    });
 
-    self.pull();
+        if (pind.read) {
+            pind.read();
+        }
+    });
 };
 
 ParticleBridge.prototype._forget = function () {

@@ -15,6 +15,10 @@ var exemplar = new Bridge({
 exemplar.discovered = function (bridge) {
     console.log("+", "got one", bridge.meta());
 
+    bridge.pulled = function(pulld) {
+        console.log("+", "pulled", pulld);
+    };
+
     bridge.connect({
         init: {
             "on": {
