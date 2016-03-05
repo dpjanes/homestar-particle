@@ -22,7 +22,7 @@ exemplar.discovered = function (bridge) {
     bridge.connect({
         init: {
             "value": {
-                "ain": "A0",
+                "ain": "A1",
             },
         },
     });

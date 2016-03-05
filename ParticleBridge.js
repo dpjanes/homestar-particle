@@ -121,7 +121,37 @@ ParticleBridge.prototype.connect = function (connectd) {
     self.connectd = _.d.compose.shallow(connectd, {
         init: {
         },
+        data_in: function(paramd) {
+            paramd.cookd = _.d.clone.shallow(paramd.rawd);
+        },
+        data_out: function(paramd) {
+            paramd.rawd = _.d.clone.shallow(paramd.cookd);
+        },
     });
+
+    var _pulled = function(code, value) {
+        var paramd = {
+            cookd: {},
+            rawd: {},
+        };
+        paramd.rawd[code] = value;
+
+        self.connectd.data_in(paramd);
+
+        var changed = false;
+        _.mapObject(paramd.cookd, function(cvalue, ccode) {
+            if (self.pulld[ccode] === cvalue) {
+                return;
+            }
+
+            self.pulld[ccode] = cvalue;
+            changed = true;
+        });
+
+        if (changed) {
+            self.pulled(self.pulld);
+        }
+    };
 
     _.mapObject(self.connectd.init, function(init_pind, code) {
         _.mapObject(init_pind, function(pin, mode) {
@@ -137,14 +167,7 @@ ParticleBridge.prototype.connect = function (connectd) {
                 pind.mode = self.native.MODES.INPUT;
                 pind.read = function() {
                     self.native.digitalRead(pind.pin, function(value) {
-                        value = value ? true : false;
-
-                        if (self.pulld[pind.code] === value) {
-                            return;
-                        }
-
-                        self.pulld[pind.code] = value;
-                        self.pulled(self.pulld);
+                        _pulled(pind.code, value ? true : false);
                     });
                 }
             } else if (mode === "dout") {
@@ -167,12 +190,7 @@ ParticleBridge.prototype.connect = function (connectd) {
                 pind.mode = self.native.MODES.ANALOG;
                 pind.read = function() {
                     self.native.analogRead(pind.pin, function(value) {
-                        if (self.pulld[pind.code] === value) {
-                            return;
-                        }
-
-                        self.pulld[pind.code] = value;
-                        self.pulled(self.pulld);
+                        _pulled(pind.code, value);
                     });
                 }
             } else if (mode === "aout") {
@@ -271,7 +289,14 @@ ParticleBridge.prototype.push = function (pushd, done) {
         pushd: pushd
     }, "push");
 
-    _.mapObject(pushd, function(value, code) {
+    var paramd = {
+        rawd: {},
+        cookd: pushd,
+    };
+
+    self.connectd.data_out(paramd);
+
+    _.mapObject(paramd.rawd, function(value, code) {
         for (var pi in self.pinds) {
             var pind = self.pinds[pi];
             if ((pind.code === code) && pind.write) {
