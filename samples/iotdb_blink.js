@@ -1,6 +1,9 @@
 /*
- *  How to use this module in IOTDB / HomeStar
- *  This is the best way to do this
+ *  Demonstrate Blink an LED. 
+ *  Connect an LED to D6.
+ *
+ *  This is the best way to do this.
+ *  
  *  Note: to work, this package must have been installed by 'homestar install' 
  */
 
@@ -8,7 +11,8 @@
 
 var iotdb = require('iotdb');
 
-var things = iotdb.connect('ParticleOut', {
+var things = iotdb.connect('ParticleOn', {
+    pin: "D7",
 });
 things.on("state", function(thing) {
     console.log("+", "state", thing.thing_id(), "\n ", thing.state("istate"));
@@ -19,5 +23,3 @@ things.on("meta", function(thing) {
 things.on("thing", function(thing) {
     console.log("+", "discovered", thing.thing_id(), "\n ", thing.state("meta"));
 });
-
-

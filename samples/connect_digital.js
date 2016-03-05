@@ -1,5 +1,7 @@
 /*
- *  This will send blink the default LED.
+ *  Demonstrate Digital Read and Write.
+ *  Connect an LED to D6 and a Push Button to D3.
+ *
  *  Prefer the iotdb_* versions
  */
 

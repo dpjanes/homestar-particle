@@ -1,6 +1,8 @@
 /*
- *  This will send values 0...255 to the LED
- *  Prefer the iotdb_* versions
+ *  Demonstrate Analog Reads. 
+ *  Connect a Pot to A1.
+ *
+ *  Prefer the iotdb_* versions.
  */
 
 "use strict";
@@ -26,18 +28,5 @@ exemplar.discovered = function (bridge) {
             },
         },
     });
-
-    /*
-    var value = 0;
-    var step = 20;
-    setInterval(function() {
-        bridge.push({
-            "value": value,
-        }, _.noop);
-
-        value += step;
-        value %= 255;
-    }, 1000);
-    */
 };
 exemplar.discover();

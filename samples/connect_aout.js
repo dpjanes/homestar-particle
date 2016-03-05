@@ -1,5 +1,7 @@
 /*
- *  This will send values 0...255 to the LED
+ *  Demonstrate Analog Write.
+ *  Connect an LED to A5
+ *
  *  Prefer the iotdb_* versions
  */
 
