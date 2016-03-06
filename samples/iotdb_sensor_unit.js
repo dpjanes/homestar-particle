@@ -1,5 +1,5 @@
 /*
- *  Demonstrate reading an analog value, between 0 and 100.
+ *  Demonstrate reading an analog value, between 0 and 1.
  *  Don't forget to reset the board before testing (sorry).
  *
  *  This is the best way to do this.
@@ -11,9 +11,9 @@
 
 var iotdb = require('iotdb');
 
-var things = iotdb.connect('ParticleSensorPercent', {
+var things = iotdb.connect('ParticleSensorUnit', {
     pin: "A3",
-    sensitity: 5,
+    sensitity: 0.05,
 });
 things.on("istate", function(thing) {
     console.log("+", "state", thing.thing_id(), "\n ", thing.state("istate"));

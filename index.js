@@ -29,6 +29,7 @@ exports.bindings = [
 
     // Generic Sensor
     require('./models/ParticleSensorPercent').binding,
+    require('./models/ParticleSensorUnit').binding,
 ];
 
 exports.iotdb = require("iotdb");
