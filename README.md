@@ -11,34 +11,63 @@ Then:
 
     $ homestar install homestar-particle
 
+You'll also need to save your Access Token. 
+To get your Access Token, go to [Particle Build](https://build.particle.io/build/),
+log in, and click on Settings (the cog in the lower right corner).
+
+Copy the Access Token and use it as follows
+
+    $ homestar set /bridges/ParticleBridge/initd/key 8888888888888888888888888888888888888888
+
+If you only have the one Particle device, you can save that too.
+If you have multiple devices, you'll need to specify the name when connecting.
+
+    $ homestar set /bridges/ParticleBridge/initd/name elrond
+        
+
 # Testing
 
 ## IOTDB
 
-Turn on Particle.
+Turn on the built in LED
 
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> things = iotdb.connect("Particle")
-	>>> things.set(":on", true);
-	
-## [IoTQL](https://github.com/dpjanes/iotdb-iotql)
+    var iotdb = require('iotdb')
+    var things = iotdb.connect('ParticleOn');
+    things.set(':on', true);
 
-Change to HDMI1 
+Turn on the built in LED, specifying both the Access Token
+and the Board Name as parameters
 
-	$ homestar install iotql
-	$ homestar iotql
-	> SET state:on = true WHERE meta:model-id = "particle";
+    var iotdb = require('iotdb')
+    var things = iotdb.connect('ParticleOn', {
+        "key": "8888888888888888888888888888888888888888",
+        "name": "elrond",
+    });
+    things.set(':on', true);
 
-## Home☆Star
+Turn on LED on D6
 
-Do:
+    var iotdb = require('iotdb')
+    var things = iotdb.connect('ParticleOn', {
+        pin: 'D6',
+    });
+    things.set(':on', true);
 
-	$ homestar runner browser=1
-	
-You may have to refresh the page, as it may take a little while for your Things to be discovered. If your TV is not on it won't show up.
+Turn the LED on A4 to 50% brightness
+
+    var iotdb = require('iotdb')
+    var things = iotdb.connect('ParticleValuePercent', {
+        pin: 'D6',
+    });
+    things.set(':value', true);
 
 # Models
-## Particle
 
-See [Particle.iotql](https://github.com/dpjanes/homestar-particle/blob/master/models/Particle.iotql)
+## Generic Actuators
+### ParticleOn
+### ParticleOpen
+### ParticleValueBoolean
+### ParticleValueUnit
+### ParticleValuePercent
+## Generic Sensors
+## "Real" Devices
