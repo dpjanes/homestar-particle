@@ -45,6 +45,8 @@ var ParticleBridge = function (initd, native) {
         iotdb.keystore().get("bridges/ParticleBridge/initd"), {
             name: null,
             token: null,
+            pin: null,
+            init: null,
         }
     );
 
@@ -119,6 +121,9 @@ ParticleBridge.prototype.connect = function (connectd) {
     self._validate_connect(connectd);
 
     self.connectd = _.d.compose.shallow(connectd, {
+        pin: self.initd.pin,
+        init: self.initd.init,
+    }, {
         init: {
         },
         data_in: function(paramd) {
@@ -235,6 +240,14 @@ ParticleBridge.prototype.connect = function (connectd) {
         pinds: self.pinds,
     }, "pin definitions");
 
+    if (self.pinds.length === 0) {
+        logger.error({
+            method: "connect",
+            cause: "likely an error in the Model JS file",
+        }, "no pins defined!");
+        return;
+    }
+
     self.pinds.map(function(pind) {
         self.native.pinMode(pind.pin, pind.mode);
 
@@ -297,12 +310,22 @@ ParticleBridge.prototype.push = function (pushd, done) {
     self.connectd.data_out(paramd);
 
     _.mapObject(paramd.rawd, function(value, code) {
+        var found = false;
         for (var pi in self.pinds) {
             var pind = self.pinds[pi];
             if ((pind.code === code) && pind.write) {
                 pind.write(value);
+                found = true;
                 break;
             }
+        }
+
+        if (!found) {
+            logger.error({
+                method: "push",
+                code: code,
+                cause: "maybe the Model doesn't support this code?",
+            }, "matching pin for code not found");
         }
     });
 

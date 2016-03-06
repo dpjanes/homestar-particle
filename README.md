@@ -1,5 +1,5 @@
 # homestar-particle
-IOTDB / Home☆Star Module for [Particle]().
+IOTDB / Home☆Star Module for [Particle](https://www.particle.io/) boards.
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 

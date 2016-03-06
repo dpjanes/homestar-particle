@@ -18,16 +18,13 @@ exports.binding = {
     bridge: require('../ParticleBridge').Bridge,
     discover: false,
     initd: {
-        "on": {
-            "mode": "output",
-            "pin": "D7",
-        },
+        pin: null,
+        init: {
+            "on": {
+                "dout": "D7",
+            },
+        }
     },
-    connectd: {
-        data_out: function (paramd) {
-            if (paramd.cookd.on !== undefined) {
-                paramd.rawd.Pin.push([ "write", paramd.cookd.on ? 1 : 0 ]);
-            }
-        },
+    discoverd: {
     },
 };
