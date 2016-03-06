@@ -18,17 +18,18 @@ exports.binding = {
     initd: {
         pin: null,
         init: {
-            "on": {
-                "dout": "A1",
-                "sensitity": 3,
+            "value": {
+                "ain": "{{ pin|:A1 }}",
             },
         }
     },
     connectd: {
+    /*
         data_in: function(paramd) {
             if (paramd.rawd.value) {
-                paramd.cookd.value = Math.round(paramd.rawd.value / 255.0 * 100);
+                paramd.cookd.value = Math.round(paramd.rawd.value / 1024.0 * 100);
             }
         },
+        */
     },
 };

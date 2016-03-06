@@ -21,7 +21,7 @@ exports.binding = {
         pin: null,
         init: {
             "on": {
-                "dout": "D7",
+                "dout": "{{ pin|:D7 }}",
             },
         }
     },

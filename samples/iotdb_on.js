@@ -12,11 +12,16 @@
 var iotdb = require('iotdb');
 
 var things = iotdb.connect('ParticleOn', {
+    pin: "D6",
+    /*
+     *  This is the really complicated way
+     *  of doing it, just FYI more than anything
     init: {
         "on": {
             "dout": "D6",
         },
     }
+    */
 });
 things.on("istate", function(thing) {
     console.log("+", "state", thing.thing_id(), "\n ", thing.state("istate"));

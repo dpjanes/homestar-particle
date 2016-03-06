@@ -24,6 +24,8 @@
 
 var iotdb = require('iotdb');
 var _ = iotdb._;
+var format = require('iotdb-format').format;
+
 
 var Particle = require('particle-io');
 
@@ -47,6 +49,7 @@ var ParticleBridge = function (initd, native) {
             token: null,
             pin: null,
             init: null,
+            sensitity: 0,
         }
     );
 
@@ -134,6 +137,17 @@ ParticleBridge.prototype.connect = function (connectd) {
         },
     });
 
+    self.connectd.init = _.d.transform(self.connectd.init, {
+        value: function(v) {
+            if (!_.is.String(v)) {
+                return v;
+            }
+
+            // initd seems to make more sense because more open ended
+            return format(v, self.initd);   
+        },
+    });
+
     var _pulled = function(code, value) {
         var paramd = {
             cookd: {},
@@ -145,7 +159,10 @@ ParticleBridge.prototype.connect = function (connectd) {
 
         var changed = false;
         _.mapObject(paramd.cookd, function(cvalue, ccode) {
-            if (self.pulld[ccode] === cvalue) {
+            if (self.pulld[ccode] === null) {
+            } else if (self.pulld[ccode] === cvalue) {
+                return;
+            } else if (Math.abs(self.pulld[ccode] - cvalue) <= self.initd.sensitity) {
                 return;
             }
 
@@ -227,8 +244,9 @@ ParticleBridge.prototype.connect = function (connectd) {
                 logger.error({
                     method: "connect",
                     init_pind: init_pind,
+                    mode: mode,
                     cause: "likely a user error when initially connecting to the Model",
-                }, "unknown pin 'mode' -- ignoring, but this is very bad");
+                }, "unknown pin mode -- ignoring, but this is bad");
                 return;
             }
 

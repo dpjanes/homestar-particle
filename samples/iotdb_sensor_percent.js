@@ -12,11 +12,8 @@
 var iotdb = require('iotdb');
 
 var things = iotdb.connect('ParticleSensorPercent', {
-    init: {
-        "value": {
-            "ain": "A1",
-        },
-    }
+    pin: "A3",
+    sensitity: 5,
 });
 things.on("istate", function(thing) {
     console.log("+", "state", thing.thing_id(), "\n ", thing.state("istate"));

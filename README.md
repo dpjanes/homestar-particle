@@ -24,6 +24,15 @@ If you have multiple devices, you'll need to specify the name when connecting.
 
     $ homestar set /bridges/ParticleBridge/initd/name elrond
         
+# Important Note
+
+Because this is using [particle-io](https://www.npmjs.com/package/particle-io), 
+the machine you are running on has to be IP reachable from the Particle. 
+I hope to change this in a future version.
+
+Furthermore, you seem to need to press the Rest button on the Particle
+to properly do Analog Inputs. This is a bug somewhere in the 
+Libraries we are using (and a huge problem).
 
 # Testing
 
