@@ -24,7 +24,11 @@
 
 exports.Bridge = require('./ParticleBridge').Bridge;
 exports.bindings = [
+    // Generic Actuators
     require('./models/ParticleOn').binding,
+
+    // Generic Sensor
+    require('./models/ParticleSensorPercent').binding,
 ];
 
 exports.iotdb = require("iotdb");
