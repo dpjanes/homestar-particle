@@ -25,6 +25,6 @@ exports.binding = {
             },
         }
     },
-    discoverd: {
+    connectd: {
     },
 };

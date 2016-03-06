@@ -20,10 +20,11 @@ exports.binding = {
         init: {
             "on": {
                 "dout": "A1",
+                "sensitity": 3,
             },
         }
     },
-    discoverd: {
+    connectd: {
         data_in: function(paramd) {
             if (paramd.rawd.value) {
                 paramd.cookd.value = Math.round(paramd.rawd.value / 255.0 * 100);
