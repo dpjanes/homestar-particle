@@ -3,13 +3,15 @@
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
-# Installation
+# Installation and Configuration
 
-[Install Home☆Star first](https://homestar.io/about/install).
+* [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
+* [Read about installing Home☆Star](https://github.com/dpjanes/node-iotdb/blob/master/docs/homestar.md) 
 
-Then:
+    $ npm install -g homestar    ## may require sudo
+    $ homestar setup
+    $ npm install homestar-metar
 
-    $ homestar install homestar-particle
 
 You'll also need to save your Access Token. 
 To get your Access Token, go to [Particle Build](https://build.particle.io/build/),
@@ -34,21 +36,20 @@ Furthermore, you seem to need to press the Rest button on the Particle
 to properly do Analog Inputs. This is a bug somewhere in the 
 Libraries we are using (and a huge problem).
 
-# Testing
-
-## IOTDB
+# Use
 
 Turn on the built in LED
 
     var iotdb = require('iotdb')
-    var things = iotdb.connect('ParticleOn');
+    iotdb.use("homestar-particle")
+
+    const things = iotdb.connect('ParticleOn');
     things.set(':on', true);
 
 Turn on the built in LED, specifying both the Access Token
 and the Board Name as parameters
 
-    var iotdb = require('iotdb')
-    var things = iotdb.connect('ParticleOn', {
+    const things = iotdb.connect('ParticleOn', {
         "key": "8888888888888888888888888888888888888888",
         "name": "elrond",
     });
@@ -56,16 +57,14 @@ and the Board Name as parameters
 
 Turn on LED on D6
 
-    var iotdb = require('iotdb')
-    var things = iotdb.connect('ParticleOn', {
+    const things = iotdb.connect('ParticleOn', {
         pin: 'D6',
     });
     things.set(':on', true);
 
 Turn the LED on A4 to 50% brightness
 
-    var iotdb = require('iotdb')
-    var things = iotdb.connect('ParticleValuePercent', {
+    const things = iotdb.connect('ParticleValuePercent', {
         pin: 'D6',
     });
     things.set(':value', true);
