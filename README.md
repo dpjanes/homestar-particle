@@ -1,5 +1,5 @@
 # homestar-particle
-[IOTDB](https://github.com/dpjanes/node-iotdb) Bridge for [Particle](https://www.particle.io/) boards.
+[IOTDB](https://github.com/dpjanes/node-iotdb) Bridge for [Particle.io](https://www.particle.io/) boards.
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
@@ -22,10 +22,7 @@ Libraries we are using (and a huge problem).
 
 ## Module Installation
 
-Then:
-
     $ npm install -g homestar    ## may require sudo
-    $ homestar setup
     $ npm install homestar-particle
 
 ## Access Token Installation
@@ -91,3 +88,6 @@ See the [models](./models) folder, particularly the `.iotql` files
 * ParticleValueBoolean
 * ParticleValueUnit
 * ParticleValuePercent
+* ParticleSensorBoolean
+* ParticleSensorUnit
+* ParticleSensorPercent
