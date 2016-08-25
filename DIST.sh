@@ -6,7 +6,6 @@
 #   2016-03-03
 #
 
-exit 0
 PACKAGE=homestar-particle
 DIST_ROOT=/var/tmp/.dist.$$
 
