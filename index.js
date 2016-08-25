@@ -25,8 +25,10 @@
 exports.Bridge = require('./ParticleBridge').Bridge;
 exports.bindings = [
     require("./models/ParticleOn").binding,
+    require("./models/ParticleSensorBoolean").binding,
     require("./models/ParticleSensorPercent").binding,
     require("./models/ParticleSensorUnit").binding,
+    require("./models/ParticleValueBoolean").binding,
     require("./models/ParticleValuePercent").binding,
     require("./models/ParticleValueUnit").binding,
 ];

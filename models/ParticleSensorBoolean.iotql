@@ -1,0 +1,10 @@
+CREATE MODEL ParticleSensorBoolean WITH
+    schema:name = "particle-sensor-boolean"
+ATTRIBUTE value WITH
+    schema:name = "sensor",
+    iot:purpose = iot-purpose:sensor,
+    iot:type = iot:type.boolean,
+    iot:read = true,
+    iot:write = false,
+    iot:sensor = true
+;
