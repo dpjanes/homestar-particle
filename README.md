@@ -5,6 +5,13 @@
 
 # About
 
+This uses [particle-io](https://www.npmjs.com/package/particle-io), 
+the machine you are running on has to be IP reachable from the Particle. 
+
+Furthermore, you seem to need to press the Reset button on the Particle
+to properly do Analog Inputs. This is a bug somewhere in the 
+Libraries we are using (and a huge problem).
+
 * [Read about Bridges](https://github.com/dpjanes/node-iotdb/blob/master/docs/bridges.md)
 
 # Installation and Configuration
@@ -12,11 +19,16 @@
 * [Read this first](https://github.com/dpjanes/node-iotdb/blob/master/docs/install.md)
 * [Read about installing Home☆Star](https://github.com/dpjanes/node-iotdb/blob/master/docs/homestar.md) 
 
+
+## Module Installation
+
 Then:
 
     $ npm install -g homestar    ## may require sudo
     $ homestar setup
     $ npm install homestar-particle
+
+## Access Token Installation
 
 You'll also need to save your Access Token. 
 To get your Access Token, go to [Particle Build](https://build.particle.io/build/),
@@ -30,17 +42,13 @@ If you only have the one Particle device, you can save that too.
 If you have multiple devices, you'll need to specify the name when connecting.
 
     $ homestar set /bridges/ParticleBridge/initd/name elrond
+
+## Flash Installation
+
+The Particle board needs to be "flashed" with the "VoodooSpark" Firmata-like software.
+The instructions for this are [here](https://github.com/voodootikigod/voodoospark#loading-the-firmware).
+It's quite straight forward
         
-# Important Note
-
-Because this is using [particle-io](https://www.npmjs.com/package/particle-io), 
-the machine you are running on has to be IP reachable from the Particle. 
-I hope to change this in a future version.
-
-Furthermore, you seem to need to press the Rest button on the Particle
-to properly do Analog Inputs. This is a bug somewhere in the 
-Libraries we are using (and a huge problem).
-
 # Use
 
 Turn on the built in LED
@@ -70,17 +78,16 @@ Turn on LED on D6
 Turn the LED on A4 to 50% brightness
 
     const things = iotdb.connect('ParticleValuePercent', {
-        pin: 'D6',
+        pin: 'A4',
     });
-    things.set(':value', true);
+    things.set(':value', 50, iotdb.as.percent());
 
 # Models
 
-## Generic Actuators
-### ParticleOn
-### ParticleOpen
-### ParticleValueBoolean
-### ParticleValueUnit
-### ParticleValuePercent
-## Generic Sensors
-## "Real" Devices
+See the [models](./models) folder, particularly the `.iotql` files
+
+* ParticleOn
+* ParticleOpen
+* ParticleValueBoolean
+* ParticleValueUnit
+* ParticleValuePercent

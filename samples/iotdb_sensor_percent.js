@@ -3,8 +3,6 @@
  *  Don't forget to reset the board before testing (sorry).
  *
  *  This is the best way to do this.
- *  
- *  Note: to work, this package must have been installed by 'homestar install' 
  */
 
 "use strict";

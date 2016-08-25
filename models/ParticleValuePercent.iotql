@@ -1,5 +1,5 @@
-CREATE MODEL ParticleSensorPercent WITH
-    schema:name = "particle-sensor-percent"
+CREATE MODEL ParticleValuePercent WITH
+    schema:name = "particle-value-percent"
 ATTRIBUTE value WITH
     schema:name = "sensor",
     iot:purpose = iot-purpose:sensor,
@@ -7,7 +7,7 @@ ATTRIBUTE value WITH
     iot:unit = iot-unit:math.fraction.percent,
     iot:minimum = 0,
     iot:maximum = 100,
-    iot:read = true,
-    iot:write = false,
-    iot:sensor = true
+    iot:read = false,
+    iot:write = true,
+    iot:actuator = true
 ;

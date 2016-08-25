@@ -3,8 +3,6 @@
  *  Connect an LED to D6.
  *
  *  This is the best way to do this.
- *  
- *  Note: to work, this package must have been installed by 'homestar install' 
  */
 
 "use strict";

@@ -1,0 +1,13 @@
+CREATE MODEL ParticleValueUnit WITH
+    schema:name = "particle-value-unit"
+ATTRIBUTE value WITH
+    schema:name = "value",
+    iot:purpose = iot-purpose:value,
+    iot:type = iot:type.number,
+    iot:unit = iot-unit:math.fraction.unit,
+    iot:minimum = 0,
+    iot:maximum = 1,
+    iot:read = false,
+    iot:write = true,
+    iot:actuator = true
+;

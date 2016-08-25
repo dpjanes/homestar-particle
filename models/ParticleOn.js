@@ -11,8 +11,6 @@
 
 "use strict";
 
-var iotdb = require("iotdb")
-
 exports.binding = {
     model: require('./particle-on.json'),
     bridge: require('../ParticleBridge').Bridge,

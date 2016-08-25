@@ -1,0 +1,42 @@
+{
+  "@context": {
+    "@base": "file:///particle-value-unit",
+    "@vocab": "file:///particle-value-unit#",
+    "iot": "https://iotdb.org/pub/iot#",
+    "iot-purpose": "https://iotdb.org/pub/iot-purpose#",
+    "iot:purpose": {
+      "@id": "https://iotdb.org/pub/iot#purpose",
+      "@type": "@id"
+    },
+    "iot:type": {
+      "@id": "https://iotdb.org/pub/iot#type",
+      "@type": "@id"
+    },
+    "iot-unit": "https://iotdb.org/pub/iot-unit#",
+    "iot:unit": {
+      "@id": "https://iotdb.org/pub/iot#unit",
+      "@type": "@id"
+    },
+    "schema": "http://schema.org/"
+  },
+  "@id": "",
+  "@type": "iot:Model",
+  "iot:attribute": [
+    {
+      "@id": "#value",
+      "@type": "iot:Attribute",
+      "iot:actuator": true,
+      "iot:maximum": 1,
+      "iot:minimum": 0,
+      "iot:purpose": "iot-purpose:value",
+      "iot:read": false,
+      "iot:sensor": true,
+      "iot:type": "iot:type.number",
+      "iot:unit": "iot-unit:math.fraction.unit",
+      "iot:write": true,
+      "schema:name": "value"
+    }
+  ],
+  "iot:model-id": "particle-value-unit",
+  "schema:name": "particle-value-unit"
+}

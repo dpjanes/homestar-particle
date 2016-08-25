@@ -9,8 +9,6 @@
 
 "use strict";
 
-var iotdb = require("iotdb")
-
 exports.binding = {
     model: require('./particle-sensor-percent.json'),
     bridge: require('../ParticleBridge').Bridge,
@@ -24,7 +22,7 @@ exports.binding = {
         }
     },
     connectd: {
-        data_in: function(paramd) {
+        data_in: paramd => {
             if (paramd.rawd.value) {
                 paramd.cookd.value = Math.round(paramd.rawd.value / 1024.0 * 100);
             }

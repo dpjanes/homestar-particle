@@ -1,15 +1,15 @@
 /*
- *  ParticleSensorUnit.js
+ *  ParticleValuePercent.js
  *
  *  David Janes
  *  IOTDB
- *  2016-03-06
+ *  2016-08-25
  */
 
 "use strict";
 
 exports.binding = {
-    model: require('./particle-sensor-unit.json'),
+    model: require('./particle-value-percent.json'),
     bridge: require('../ParticleBridge').Bridge,
     discover: false,
     initd: {
@@ -23,7 +23,7 @@ exports.binding = {
     connectd: {
         data_in: paramd => {
             if (paramd.rawd.value) {
-                paramd.cookd.value = Math.round((paramd.rawd.value / 1024.0) * 1000)/1000;
+                paramd.cookd.value = Math.round(paramd.rawd.value / 1024.0 * 100);
             }
         },
     },

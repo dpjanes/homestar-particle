@@ -1,15 +1,15 @@
 /*
- *  ParticleSensorUnit.js
+ *  ParticleValueUnit.js
  *
  *  David Janes
  *  IOTDB
- *  2016-03-06
+ *  2016-08-25
  */
 
 "use strict";
 
 exports.binding = {
-    model: require('./particle-sensor-unit.json'),
+    model: require('./particle-value-unit.json'),
     bridge: require('../ParticleBridge').Bridge,
     discover: false,
     initd: {

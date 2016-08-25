@@ -8,5 +8,6 @@ ATTRIBUTE value WITH
     iot:minimum = 0,
     iot:maximum = 1,
     iot:read = true,
-    iot:write = false
+    iot:write = false,
+    iot:sensor = true
 ;
