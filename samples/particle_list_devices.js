@@ -1,5 +1,7 @@
 /*
- *  These test the Particle API. 
+ *  This tests the Particle Node JS library.
+ *  We ended up not using this, but kept
+ *  because you might find it useful.
  *
  *  No IOTDB component except for getting configuration.
  */
