@@ -9,9 +9,10 @@
 
 "use strict";
 
-var iotdb = require('iotdb');
+const iotdb = require('iotdb');
+iotdb.use("homestar-particle");
 
-var things = iotdb.connect('ParticleOn', {
+const things = iotdb.connect('ParticleOn', {
     pin: "D6",
     /*
      *  This is the really complicated way

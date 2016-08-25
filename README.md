@@ -16,8 +16,7 @@ Then:
 
     $ npm install -g homestar    ## may require sudo
     $ homestar setup
-    $ npm install homestar-metar
-
+    $ npm install homestar-particle
 
 You'll also need to save your Access Token. 
 To get your Access Token, go to [Particle Build](https://build.particle.io/build/),

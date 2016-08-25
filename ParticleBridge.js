@@ -22,14 +22,14 @@
 
 "use strict";
 
-var iotdb = require('iotdb');
-var _ = iotdb._;
-var format = require('iotdb-format').format;
+const iotdb = require('iotdb');
+const _ = iotdb._;
+const format = require('iotdb-format').format;
+const errors = require('iotdb-errors');
 
+const Particle = require('particle-io');
 
-var Particle = require('particle-io');
-
-var logger = iotdb.logger({
+const logger = iotdb.logger({
     name: 'homestar-particle',
     module: 'ParticleBridge',
 });
@@ -40,8 +40,8 @@ var logger = iotdb.logger({
  *  @param {object|undefined} native
  *  only used for instances, should be 
  */
-var ParticleBridge = function (initd, native) {
-    var self = this;
+const ParticleBridge = function (initd, native) {
+    const self = this;
 
     self.initd = _.defaults(initd,
         iotdb.keystore().get("bridges/ParticleBridge/initd"), {
@@ -59,7 +59,7 @@ var ParticleBridge = function (initd, native) {
             cause: "caller must initialize with an 'token' - try homestar set /bridges/ParticleBridge/initd/token <yourkey>",
         }, "missing initd.token");
 
-        throw new Error("ParticleBridge: expected 'initd.token'");
+        throw new errors.SetupRequired("ParticleBridge: expected 'initd.token'");
     }
     if (_.is.Empty(self.initd.name)) {
         logger.error({
@@ -67,7 +67,7 @@ var ParticleBridge = function (initd, native) {
             cause: "caller must initialize with an 'name' - try homestar set /bridges/ParticleBridge/initd/name <yourkey>",
         }, "missing initd.name");
 
-        throw new Error("ParticleBridge: expected 'initd.name'");
+        throw new errors.SetupRequired("ParticleBridge: expected 'initd.name'");
     }
 
     self.native = native;   // the thing that does the work - keep this name
@@ -90,7 +90,7 @@ ParticleBridge.prototype.name = function () {
  *  See {iotdb.bridge.Bridge#discover} for documentation.
  */
 ParticleBridge.prototype.discover = function () {
-    var self = this;
+    const self = this;
 
     logger.info({
         method: "discover"
@@ -116,7 +116,7 @@ ParticleBridge.prototype.discover = function () {
  *  See {iotdb.bridge.Bridge#connect} for documentation.
  */
 ParticleBridge.prototype.connect = function (connectd) {
-    var self = this;
+    const self = this;
     if (!self.native) {
         return;
     }
@@ -276,7 +276,7 @@ ParticleBridge.prototype.connect = function (connectd) {
 };
 
 ParticleBridge.prototype._forget = function () {
-    var self = this;
+    const self = this;
     if (!self.native) {
         return;
     }
@@ -293,7 +293,7 @@ ParticleBridge.prototype._forget = function () {
  *  See {iotdb.bridge.Bridge#disconnect} for documentation.
  */
 ParticleBridge.prototype.disconnect = function () {
-    var self = this;
+    const self = this;
     if (!self.native || !self.native) {
         return;
     }
@@ -307,7 +307,7 @@ ParticleBridge.prototype.disconnect = function () {
  *  See {iotdb.bridge.Bridge#push} for documentation.
  */
 ParticleBridge.prototype.push = function (pushd, done) {
-    var self = this;
+    const self = this;
     if (!self.native) {
         done(new Error("not connected"));
         return;
@@ -354,7 +354,7 @@ ParticleBridge.prototype.push = function (pushd, done) {
  *  See {iotdb.bridge.Bridge#pull} for documentation.
  */
 ParticleBridge.prototype.pull = function () {
-    var self = this;
+    const self = this;
     if (!self.native) {
         return;
     }
@@ -366,7 +366,7 @@ ParticleBridge.prototype.pull = function () {
  *  See {iotdb.bridge.Bridge#meta} for documentation.
  */
 ParticleBridge.prototype.meta = function () {
-    var self = this;
+    const self = this;
     if (!self.native) {
         return;
     }
@@ -395,8 +395,8 @@ ParticleBridge.prototype.reachable = function () {
 ParticleBridge.prototype.configure = function (app) {};
 
 /* -- internals -- */
-var __boardd = {};
-var __pendingsd = {};
+const __boardd = {};
+const __pendingsd = {};
 
 /**
  *  This returns a connection object per ( host, port, tunnel_host, tunnel_port )
@@ -407,18 +407,18 @@ var __pendingsd = {};
  *  in '__pendingsd' until the connection is actually made
  */
 ParticleBridge.prototype._board = function (callback) {
-    var self = this;
+    const self = this;
 
-    var board_key = self.initd.name;
+    const board_key = self.initd.name;
 
     // board existings
-    var board = __boardd[board_key];
+    let board = __boardd[board_key];
     if (board) {
         return callback(null, board);
     }
 
     // queue exists
-    var pendings = __pendingsd[board_key];
+    let pendings = __pendingsd[board_key];
     if (pendings) {
         pendings.push(callback);
         return;
@@ -430,7 +430,7 @@ ParticleBridge.prototype._board = function (callback) {
 
     pendings.push(callback);
 
-    var _connect = function (error) {
+    const _connect = error => {
         delete __pendingsd[board_key];
 
         if (error) {
@@ -441,7 +441,7 @@ ParticleBridge.prototype._board = function (callback) {
                 error: _.error.message(error),
             }, "creating web server");
 
-            pendings.map(function (pending) {
+            pendings.forEach(pending => {
                 pending(error, null);
             });
             return;
@@ -449,7 +449,7 @@ ParticleBridge.prototype._board = function (callback) {
 
         __boardd[board_key] = board;
 
-        pendings.map(function (pending) {
+        pendings.forEach(pending => {
             pending(null, board);
         });
     };
@@ -460,7 +460,7 @@ ParticleBridge.prototype._board = function (callback) {
         name: self.initd.name,
     }, "connect to Particle");
 
-    var board = new Particle({
+    board = new Particle({
         token: self.initd.token,
         deviceId: self.initd.name,
     });
