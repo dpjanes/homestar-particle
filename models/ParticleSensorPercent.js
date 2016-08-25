@@ -22,7 +22,7 @@ exports.binding = {
         }
     },
     connectd: {
-        data_in: paramd => {
+        data_out: paramd => {
             if (paramd.rawd.value) {
                 paramd.cookd.value = Math.round(paramd.rawd.value / 1024.0 * 100);
             }

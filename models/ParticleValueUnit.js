@@ -16,14 +16,14 @@ exports.binding = {
         pin: null,
         init: {
             "value": {
-                "ain": "{{ pin|:A1 }}",
+                "aout": "{{ pin|:A1 }}",
             },
         }
     },
     connectd: {
-        data_in: paramd => {
-            if (paramd.rawd.value) {
-                paramd.cookd.value = Math.round((paramd.rawd.value / 1024.0) * 1000)/1000;
+        data_out: paramd => {
+            if (paramd.cookd.value) {
+                paramd.rawd.value = Math.round(paramd.cookd.value * 255.0);
             }
         },
     },

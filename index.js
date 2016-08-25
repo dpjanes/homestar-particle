@@ -24,10 +24,9 @@
 
 exports.Bridge = require('./ParticleBridge').Bridge;
 exports.bindings = [
-    // Generic Actuators
-    require('./models/ParticleOn').binding,
-
-    // Generic Sensor
-    require('./models/ParticleSensorPercent').binding,
-    require('./models/ParticleSensorUnit').binding,
+    require("./models/ParticleOn").binding,
+    require("./models/ParticleSensorPercent").binding,
+    require("./models/ParticleSensorUnit").binding,
+    require("./models/ParticleValuePercent").binding,
+    require("./models/ParticleValueUnit").binding,
 ];
