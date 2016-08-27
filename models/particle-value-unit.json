@@ -30,7 +30,7 @@
       "iot:minimum": 0,
       "iot:purpose": "iot-purpose:value",
       "iot:read": false,
-      "iot:sensor": true,
+      "iot:sensor": false,
       "iot:type": "iot:type.number",
       "iot:unit": "iot-unit:math.fraction.unit",
       "iot:write": true,

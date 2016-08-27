@@ -20,7 +20,7 @@
     {
       "@id": "#value",
       "@type": "iot:Attribute",
-      "iot:actuator": true,
+      "iot:actuator": false,
       "iot:purpose": "iot-purpose:sensor",
       "iot:read": true,
       "iot:sensor": true,

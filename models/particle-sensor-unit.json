@@ -25,7 +25,7 @@
     {
       "@id": "#value",
       "@type": "iot:Attribute",
-      "iot:actuator": true,
+      "iot:actuator": false,
       "iot:maximum": 1,
       "iot:minimum": 0,
       "iot:purpose": "iot-purpose:sensor",

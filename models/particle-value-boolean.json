@@ -23,7 +23,7 @@
       "iot:actuator": true,
       "iot:purpose": "iot-purpose:value",
       "iot:read": false,
-      "iot:sensor": true,
+      "iot:sensor": false,
       "iot:type": "iot:type.boolean",
       "iot:write": true,
       "schema:name": "value"

@@ -22,8 +22,8 @@
       "@type": "iot:Attribute",
       "iot:actuator": true,
       "iot:purpose": "iot-purpose:on",
-      "iot:read": true,
-      "iot:sensor": true,
+      "iot:read": false,
+      "iot:sensor": false,
       "iot:type": "iot:type.boolean",
       "iot:write": true,
       "schema:name": "on"
