@@ -32,3 +32,5 @@ exports.bindings = [
     require("./models/ParticleValuePercent").binding,
     require("./models/ParticleValueUnit").binding,
 ];
+
+exports.module_folder = __dirname;
