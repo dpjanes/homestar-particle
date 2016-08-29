@@ -53,6 +53,8 @@ const ParticleBridge = function (initd, native) {
         }
     );
 
+    console.trace();
+
     if (_.is.Empty(self.initd.token)) {
         logger.error({
             method: "ParticleBridge",
