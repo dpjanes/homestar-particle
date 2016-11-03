@@ -82,10 +82,6 @@ const ParticleBridge = function (initd, native) {
 
 ParticleBridge.prototype = new iotdb.Bridge();
 
-ParticleBridge.prototype.name = function () {
-    return "ParticleBridge";
-};
-
 /* --- lifecycle --- */
 
 /**
